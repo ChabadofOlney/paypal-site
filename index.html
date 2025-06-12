@@ -41,8 +41,18 @@
         })
         .then(data => data.id);
       },
-      onApprove: function (data, actions) {
-        return actions.order.capture().then(function (details) {
+      onApprove: function (data) {
+        return fetch(`https://paypal-backend-u81a.onrender.com/api/orders/${data.orderID}/capture`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('Error capturing the order');
+          }
+          return res.json();
+        })
+        .then(details => {
           alert('Thank you for your purchase, ' + details.payer.name.given_name + '!');
         });
       },
@@ -55,3 +65,4 @@
 
 </body>
 </html>
+
